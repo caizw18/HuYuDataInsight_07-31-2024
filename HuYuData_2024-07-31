@@ -1,0 +1,96 @@
+def heapify(arr, n, i):
+    largest = i  # Initialize largest as root
+    left = 2 * i + 1  # left = 2*i + 1
+    right = 2 * i + 2  # right = 2*i + 2
+
+    # See if left child of root exists and is greater than root
+    if left < n and arr[i] < arr[left]:
+        largest = left
+
+    # See if right child of root exists and is greater than root
+    if right < n and arr[largest] < arr[right]:
+        largest = right
+
+    # Change root, if needed
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]  # swap
+
+        # Heapify the root.
+        heapify(arr, n, largest)
+
+def heap_sort(arr):
+    n = len(arr)
+
+    # Build a maxheap.
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+
+    # One by one extract elements
+    for i in range(n-1, 0, -1):
+        arr[i], arr[0] = arr[0], arr[i]  # swap
+        heapify(arr, i, 0)
+
+    return arr
+
+# Example usage
+arr = [12, 11, 13, 5, 6, 7]
+sorted_arr = heap_sort(arr)
+print(sorted_arr)  # Output: [5, 6, 7, 11, 12, 13]
+
+import heapq
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+    def __lt__(self, other):
+        return self.val < other.val
+
+def merge_k_lists(lists):
+    min_heap = []
+    
+    # Initialize the heap with the head of each list
+    for l in lists:
+        if l:
+            heapq.heappush(min_heap, l)
+    
+    dummy = ListNode(0)
+    current = dummy
+    
+    # Extract the smallest node and push its next node into the heap
+    while min_heap:
+        smallest_node = heapq.heappop(min_heap)
+        current.next = smallest_node
+        current = current.next
+        if smallest_node.next:
+            heapq.heappush(min_heap, smallest_node.next)
+    
+    return dummy.next
+
+# Helper functions for testing
+def list_to_linkedlist(lst):
+    head = ListNode(lst[0])
+    current = head
+    for val in lst[1:]:
+        current.next = ListNode(val)
+        current = current.next
+    return head
+
+def linkedlist_to_list(head):
+    lst = []
+    current = head
+    while current:
+        lst.append(current.val)
+        current = current.next
+    return lst
+
+# Example usage
+lists = [
+    list_to_linkedlist([1, 4, 5]),
+    list_to_linkedlist([1, 3, 4]),
+    list_to_linkedlist([2, 6])
+]
+
+merged_head = merge_k_lists(lists)
+print(linkedlist_to_list(merged_head))  # Output: [1, 1, 2, 3, 4, 4, 5, 6]
